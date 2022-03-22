@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const User = require("./model/User");
+const User = require("../model/User");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 var jwt = require('jsonwebtoken');
-const { body, param, validationResult } = require('express-validator');
-const secret = "laundryproject";
+const { body, param, validationResult,oneOf } = require('express-validator');
+const SECRET = "laundryproject";
 
 
 router.use(bodyParser.urlencoded({extended:true}));
@@ -14,76 +14,67 @@ router.use(bodyParser.json());
 
 
 
-
-
-router.post('/laundry/v1/register',async(req,res)=>{
-    console.log(req.body)
-    
+router.get('/users',async(req,res)=>{
     try{
-        const {name,email,password,state,phone,district,address,pincode}=req.body
-        bcrypt.hash(password, 10, async function(err, hash) {
-           
-        if(err){
-                res.status(400).json({
-                    status: "failed",
-                    message: "Invalid password"
-                })
-            }
-        const user =await User.create(
-            {
-            name,email,password:hash,state,phone,district,address,pincode
-        })
-        res.json({
-            status:suceess,
-            user
-        })
-    })
-       
-    }catch (e) {
-        res.json({
-            status: "failed",
-            message: e.message
+        const users = await User.find();
+        res.status(200).json({users})
+    }catch(err){
+        return res.status(400).json({
+            status:'succeess',
+            message:err.message
+
         })
     }
 })
 
-router.post('/laundry/v1/login',async(req,res)=>{
+
+
+router.post('/login',oneOf([body("email"),body("phone")]), body("password"),async(req,res)=>{
     try {
-        
-        const {email,Phone, password} = req.body;
-        const user = await User.find({$or:[{email}, {phone}]});
-        if(!user){
-            res.status(401).json({
-                status:"failed",
-                message:"Invalid user"
-            })
+        const error = validationResult(req)
+        if (!error.isEmpty()) {
+            return res.status(400).json({ errors: error.array() })
         }
-        
-        bcrypt.compare(password, user.password).then(function(result) {
-            if(result){
+        let user
+        console.log(req.body)
+        if(req.body.phone){
+            var {phone,password} = req.body
+            user = await User.findOne({ phone })
+        }else if(req.body.email){
+            var {email,password} = req.body
+            user = await User.findOne({ email })
+        }
+        if (!user) {
+            return res.status(401).json({
+                status: "failed",
+                message: "invalid user"
+            })
+        } 
+        bcrypt.compare(password,user.password).then(function(result){
+            if (result){
                 var token = jwt.sign({
-                    exp: Math.floor(Date.now() / 1000) + (60 * 60),
                     data: user._id
-                  }, secret);
-                res.json({
-                    status: "sucess",
+                },SECRET,{ expiresIn: '7d'})
+                
+                return res.status(200).json({
+                    status:"success",
                     token
                 })
             }else{
-                res.status(401).json({
+                return res.status(401).json({
                     status: "failed",
-                    message: "Not Authenticated"
+                    message:"not authenticated"
                 })
             }
-        });
-       
+        })
+
     } catch (e) {
-        res.json({
-            status: "failed",
+        return res.status(500).json({
+            status: "Failed",
             message: e.message
         })
     }
-
 })
+
 
 module.exports = router;

@@ -1,29 +1,22 @@
 const mongoose = require('mongoose');
 const { schema } = require('./User');
 const {Schema} = mongoose;
-
-
 const Items = new Schema({
-    productName:{type:String,products:["shirts","T-shirts","trousers","jeans","boxers","joggers","others"]},
-    washType:{type:String,actions:["wash","iron","towel","bleach"]}
+    productType: { type: String },
+    quantity: { type: Number, default: 0 },
+    washing: { type: Boolean, default: false },
+    ironing: { type: Boolean, default: false },
+    drywash: { type: Boolean, default: false },
+    chemicalwash: { type: Boolean, default: false }
 })
-
 const OrderSchema = new Schema({
-    userId :  {type:Schema.Types.ObjectId,ref:'User'},
-    status : {type:String,enum:["read to pickup","processing","delivered"]},
-    date : {type:Date,default:Date.now},
-
-    items : [Items],
-
-    totalPrices : Number,
-    totalItems : Number,
-    orderStatus :  {type:String},
-    storeLocation :  {type:String,require:true},
-    totalPrice :  {type:Number},
-
-    
-
+    status: {type: String},
+    products: {type: [Items]},
+    totalPrice : {type: Number, default:0},
+    totalQuantity : {type: Number, default:0},
+    user: {type: mongoose.Types.ObjectId ,ref:'User'},
 });
+const Order = mongoose.model('Order',OrderSchema);
 
 
-module.exports =User;
+module.exports =Order;

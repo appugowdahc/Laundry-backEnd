@@ -1,0 +1,11 @@
+POST   http://localhost:3000/laundry/v1/register HTTP/1.1
+content-type: application/json
+{
+    "name":"appu",
+    "email":"appu@gmail.com",
+    "phone":9164774147,
+    "state":"karnataka",
+    "district":"mandya",
+    "address":"mandya",
+    "pincode":571446
+}
