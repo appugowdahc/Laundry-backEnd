@@ -2,7 +2,7 @@ const express = require('express');
 const User = require('./model/User');
 const Order = require('./model/Order');
 const LoginRouter = require('./routes/login');
-const RegRouter = require('./routes/login');
+const RegRouter = require('./routes/reg');
 const OrderRouter = require('./routes/Orders');
 var jwt = require('jsonwebtoken');
 
@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-app.use("/user", (req, res, next) =>{
+app.use("/order", (req, res, next) =>{
     var token = req.headers.authorization.split("test ")[1];
     if(!token){
         return res.status(401).json({

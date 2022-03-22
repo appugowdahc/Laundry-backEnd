@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const {Schema} = mongoose;
 const router = express.Router();
 const Order = require('../model/Order');
+const User = require('../model/User')
 const bodyParser = require("body-parser");
 const methodOverride = require('method-override')
 const { body, params, validationResult } = require('express-validator');
@@ -12,23 +13,31 @@ router.use(methodOverride('_method'))
 router.use(bodyParser.urlencoded({extended:true}));
 
 router.use(bodyParser.json());
-// for getting user pastOrders
-router.get("/orders/:id", async (req, res) =>{
-    const user = req.params.id
+// for getting user pastOrders by user id
+router.get("/order/:id", async (req, res) =>{
+    try{
+        const user = req.params.id
     console.log(user)
 
-    const orders = await Order.find({_id:user});
+    const orders = await Order.find({user:user});
+    
     res.json({
         status: "success foam",
         orders
-    });
+    })
+    }catch(e){
+        res.status(400).json({
+            status:"failed",
+            message:e.message
+        })
+    }
 });
 //for tracking particular order by o
-router.get("/orders/:id", async (req, res) =>{
-    const userId = req.params.id
-    console.log(userId)
+router.get("/order/:id", async (req, res) =>{
+    const orderId = req.params.id
+    console.log(orderId)
 
-    const orders = await Order.findOne({userId});
+    const orders = await Order.findOne({_id:rderId},{user:req.id});
     res.json({
         status: "success foam",
         orders
