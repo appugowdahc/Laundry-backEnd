@@ -25,7 +25,7 @@ app.use("/order", (req, res, next) =>{
             message: "Token is missing"
         })
     }
-    // verify the toke
+    // verify the token
     jwt.verify(token, SECRET, async function(err, decoded) {
         if(err){
             return res.status(401).json({
@@ -33,7 +33,7 @@ app.use("/order", (req, res, next) =>{
                 message: "Invalid token"
             })
         }
-        req.user = decoded.data;
+        req.userId = decoded.data;
         next();
     });
 });
@@ -47,4 +47,4 @@ app.use('/',RegRouter);
 app.use('/',OrderRouter)
 
 
-app.listen(3000,()=>console.log('server is running'))
+app.listen(4000,()=>console.log('server is running'))
