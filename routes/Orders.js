@@ -14,7 +14,7 @@ router.use(bodyParser.urlencoded({extended:true}));
 
 router.use(bodyParser.json());
 // for getting user pastOrders by user id
-router.get("/order/:id", async (req, res) =>{
+router.get("/order/my/:id", async (req, res) =>{
     try{
         const user = req.params.id
     console.log(user)
@@ -32,41 +32,49 @@ router.get("/order/:id", async (req, res) =>{
         })
     }
 });
-//for tracking particular order by o
+//for tracking particular order by orderId
 router.get("/order/:id", async (req, res) =>{
-    const orderId = req.params.id
+    try{
+        const orderId = req.params.id
     console.log(orderId)
 
-    const orders = await Order.findOne({_id:rderId},{user:req.id});
+    const orders = await Order.findOne({_id:orderId},{user:req.userId});
     res.json({
-        status: "success foam",
+        status: "success ",
         orders
     });
-});
 
-
-router.get('/products', async(req,res)=>{
-    
-        // strict false will allow you to save document which is coming from the req.body
-
-        const ProductCollectionSchema = new Schema({}, { strict: false })
-        const ProductCollection = mongoose.model('test_collection', ProductCollectionSchema)
-
-        let body = {product:["shirts","t-shirts","trousers","jeans","boxers","joggers","others"]}
-
-        const testCollectionData = new ProductCollection(body)
-        await testCollectionData.save()
-        return res.json({
-            testCollectionData
+    }catch(err){
+        res.status(400).json({
+            status:"failed",
+            message:err.message
         })
-    
+    }
 });
 
 
+// router.get('/products', async(req,res)=>{
+    
+//         // strict false will allow you to save document which is coming from the req.body
+
+//         const ProductCollectionSchema = new Schema({}, { strict: false })
+//         const ProductCollection = mongoose.model('test_collection', ProductCollectionSchema)
+
+//         let body = {product:["shirts","t-shirts","trousers","jeans","boxers","joggers","others"]}
+
+//         const testCollectionData = new ProductCollection(body)
+//         await testCollectionData.save()
+//         return res.json({
+//             testCollectionData
+//         })
+    
+// });
 
 
 
 
+
+// to create a order
 router.post("/order", async (req, res) => {
     try{
         const order = await Order.create({
@@ -88,6 +96,7 @@ router.post("/order", async (req, res) => {
     }
 });
 
+// to cancel the order
 router.put('/order/:id',async(req,res)=>{
     try{
         const orderId = req.params.id;
