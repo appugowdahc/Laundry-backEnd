@@ -69,16 +69,17 @@ router.get('/products', async(req,res)=>{
 
 router.post("/order", async (req, res) => {
     try{
+        const {products}=req.body;
+        const status=["in washing","ready to pickup", "ready to deliver"];
+        const state=Math.floor(Math.random() * status.length);
         const order = await Order.create({
             user: req.user,
-            status : req.body.status,
-            products : req.body.products,
-            totalPrice: req.body.totalPrice,
-            totalQuantity: req.body.totalQuantity
+            items : products,
+            status :status[state]  
         })
         res.json({
-            status: "success",
-            order
+            status:"success",
+            message:"orderCreated"
         })
     }catch(err){
         res.status(402).json({

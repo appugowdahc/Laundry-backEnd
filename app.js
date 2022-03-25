@@ -9,21 +9,24 @@ var jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bodyParser=require('body-parser');
 mongoose.connect('mongodb+srv://appu:appu505@cluster0.aexiq.mongodb.net/LaundryDatabase?retryWrites=true&w=majority');
-const SECRET = "laundryproject";
-const app = express();
+var cors = require('cors')
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const SECRET = "laundryproject";
+const app = express();      
+app.use(cors())    
+app.use(bodyParser.json());    
+app.use(bodyParser.urlencoded({ extended: true }));    
 
 
 
 app.use("/order", (req, res, next) =>{
-    var token = req.headers.authorization.split("test ")[1];
+    var token = req.headers.authorization.split("");
+    // var token = req.headers.authorization;
     if(!token){
         return res.status(401).json({
-            status: "failed",
-            message: "Token is missing"
-        })
+            status: "failed",    
+            message: "Token is missing"      
+        })  
     }
     // verify the toke
     jwt.verify(token, SECRET, async function(err, decoded) {
@@ -47,4 +50,4 @@ app.use('/',RegRouter);
 app.use('/',OrderRouter)
 
 
-app.listen(3000,()=>console.log('server is running'))
+app.listen(5000,()=>console.log('server is running'))
