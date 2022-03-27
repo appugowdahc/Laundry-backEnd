@@ -55,17 +55,19 @@ router.post('/login',oneOf([body("email"),body("phone")]), body("password"),asyn
                 var token = jwt.sign({
                     data: user._id
                 },SECRET,{ expiresIn: '7d'})
-                
-                return res.status(200).json({
-                    status:"success",
-                    token
+               
+                return res.json({
+                    status:"OK",
+                    user:token  
+                   
                 })
             }else{
-                return res.status(401).json({
-                    status: "failed",
-                    message:"not authenticated"
+                return res.json({
+                    status:'error',
+                    user:false
                 })
             }
+           
         })
 
     } catch (e) {

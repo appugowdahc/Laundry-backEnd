@@ -34,7 +34,7 @@ router.post('/register',body('name'),body('email'),body('phone'),body('password'
             name,email,password:hash,state,phone,district,address,pincode
         })
         res.json({
-            status:"suceess",
+            status:"OK",
             user
         })
     })
