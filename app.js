@@ -9,6 +9,9 @@ var jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const bodyParser=require('body-parser');
 mongoose.connect('mongodb+srv://appu:appu505@cluster0.aexiq.mongodb.net/LaundryDatabase?retryWrites=true&w=majority');
+// mongoose.connect('mongodb://appu:appu505@cluster0-shard-00-00.aexiq.mongodb.net:27017,cluster0-shard-00-01.aexiq.mongodb.net:27017,cluster0-shard-00-02.aexiq.mongodb.net:27017/LaundryDatabase?ssl=true&replicaSet=atlas-x21vfb-shard-0&authSource=admin&retryWrites=true&w=majority');
+ 
+
 var cors = require('cors')
 
 const SECRET = "laundryproject";
@@ -20,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.use("/order", (req, res, next) =>{
-    var token = req.headers.authorization.split("");
+    var token = req.headers.authorization.split("Bearer ")[1];
     // var token = req.headers.authorization;
     if(!token){
         return res.status(401).json({
